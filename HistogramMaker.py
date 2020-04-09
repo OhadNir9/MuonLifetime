@@ -6,7 +6,7 @@ import scipy.interpolate
 from matplotlib import cm
 
 THRESHOLD=40000.0
-datafile=open('C:\\Users\\Ohad\\\Desktop\\muon_data_II.csv','r')
+datafile=open('muon_data_II.csv','r')
 data = np.array(list(csv.reader(datafile)))
 new_data=data[1:,1:2] #only the lifetimes column
 lifetimes=(np.squeeze(np.asarray(new_data)).astype(float)).ravel()

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import csv
 import scipy.interpolate
 from matplotlib import cm
-datafile=open('C:\\Users\\Ohad\\\Desktop\\muon_calibration_II.csv','r')
+datafile=open('muon_calibration_II.csv','r')
 data = np.array(list(csv.reader(datafile)))
 new_data=data[1:,1:] #without the titles line and the index column
 th,hv,n_5=new_data[:,:1],new_data[:,1:2],new_data[:,-1] #x contains TH,HV , y contains N[5min]
