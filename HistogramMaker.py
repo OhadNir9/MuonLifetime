@@ -89,6 +89,10 @@ def Fitter(histo_values, fixed_bin_edges, first_bin=False, add_log_scale=False, 
         plt.plot(fixed_bin_edges[1:], histo_values[1:], 'ko')
     plt.plot(xx, yy) #plot the fitted function
     print("popt is: "+str(popt)) #the fit values (a,b,c)"""
+    if microsec:
+        print("lifetime is: "+str(1/popt[1])+" microsecs")
+    else:
+        print("lifetime is: " + str(1 / (1000*popt[1])) + " microsecs")
     if add_log_scale:
         plt.subplot(2, 2, 3)
         ax4 = plt.gca()
@@ -103,7 +107,7 @@ def Fitter(histo_values, fixed_bin_edges, first_bin=False, add_log_scale=False, 
         plt.yscale('log')
 
 lifetimes=lifetime_filter(raw_lifetimes_extractor())
-histo_values,fixed_bin_edges=histogram_builder(20,lifetimes)
+histo_values,fixed_bin_edges=histogram_builder(25,lifetimes)
 Fitter(histo_values, fixed_bin_edges, add_log_scale=True)
 
 plt.show()
