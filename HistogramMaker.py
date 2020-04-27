@@ -46,7 +46,7 @@ def histogram_export(histo_values,fixed_bin_edges):
     rows=zip(fixed_bin_edges,histo_values)
     with open('hist_res_'+str(len(fixed_bin_edges))+'_bins.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
-        wr.writerow(['Bin edges','Decays [ns]'])
+        wr.writerow(['Bin edges[ns]','Decays'])
         for row in rows:
             wr.writerow(row)
     myfile.close()
