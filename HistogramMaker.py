@@ -43,9 +43,10 @@ def histogram_builder(n_bins,lifetimes):
 
 #Extra code for outputting the histogram results to csv file.
 def histogram_export(histo_values,fixed_bin_edges):
-    rows=zip(histo_values,fixed_bin_edges)
-    with open('hist_res_'+str(len(fixed_bin_edges))+'_bins.csv', 'w', ) as myfile:
+    rows=zip(fixed_bin_edges,histo_values)
+    with open('hist_res_'+str(len(fixed_bin_edges))+'_bins.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+        wr.writerow(['Bin edges','Decays [ns]'])
         for row in rows:
             wr.writerow(row)
     myfile.close()
@@ -56,19 +57,23 @@ def histogram_export(histo_values,fixed_bin_edges):
 def func(x,a,b,c):
     return a*np.exp(-b*x)+c
 
-def Fitter(histo_values, fixed_bin_edges, first_bin=False, add_log_scale=False, no_const_fit=False,microsec=False):
+def Fitter(histo_values, fixed_bin_edges, first_bin=False, add_log_scale=False, no_const_fit=False,microsec=False,errors=False):
     #Fit with some initial guess
     p0=(150, 0.0005, 4)
     if microsec:
         fixed_bin_edges=[x/1000 for x in fixed_bin_edges]
         p0=(150,0.5,4)
-
+    sigma=np.sqrt(histo_values)
+    for i in range(len(sigma)):
+        if sigma[i]==0:
+            sigma[i]+=1
     if first_bin:
         popt, pcov = curve_fit(func, fixed_bin_edges, histo_values, p0=p0)
-    elif no_const_fit:
-        popt, pcov = curve_fit(func, fixed_bin_edges[1:round(0.5*len(fixed_bin_edges))], histo_values[1:round(0.5*len(histo_values))], p0=p0)
     else:
-        popt, pcov = curve_fit(func, fixed_bin_edges[1:], histo_values[1:], p0=p0)
+        if errors:
+            popt, pcov = curve_fit(func, fixed_bin_edges[1:], histo_values[1:], p0=p0,sigma=sigma[1:])
+        else:
+            popt, pcov = curve_fit(func, fixed_bin_edges[1:], histo_values[1:], p0=p0)
     if not microsec:
         xx=np.linspace(0,25000,500)
     else:
@@ -107,7 +112,7 @@ def Fitter(histo_values, fixed_bin_edges, first_bin=False, add_log_scale=False, 
         plt.yscale('log')
 
 lifetimes=lifetime_filter(raw_lifetimes_extractor())
-histo_values,fixed_bin_edges=histogram_builder(25,lifetimes)
-Fitter(histo_values, fixed_bin_edges, add_log_scale=True)
-
+histo_values,fixed_bin_edges=histogram_builder(30,lifetimes)
+Fitter(histo_values, fixed_bin_edges, add_log_scale=True,errors=True)
+histogram_export(histo_values,fixed_bin_edges)
 plt.show()
